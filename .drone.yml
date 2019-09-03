@@ -22,7 +22,7 @@ steps:
     commands:
       - pwd
       - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-      - yum update -y && yum install -y git autoconf automake gcc zlib-devel make rpm-build
+      - yum update -y && yum install -y git autoconf automake gcc zlib-devel make rpm-build libuuid-devel
       - yum install -y epel-release && yum update -y &&  yum install -y gcc-c++ autoconf-archive autogen libuv-devel openssl-devel Judy-devel lz4-devel nc json-c-devel libmnl-devel freeipmi-devel cups-devel snappy-devel protobuf-devel protobuf-c-devel
       - mkdir rhel7 && cd rhel7
       - git clone https://github.com/netdata/netdata.git
