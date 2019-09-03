@@ -55,7 +55,6 @@ steps:
       - cd .. &&  tar cJf rhel7_rpms.tar.xz rhel7_rpms
       - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./rhel7_rpms.tar.xz $VPSUSER@209.141.35.192:/root/static
 
-steps:
   - name: build_netdata_amd64_centos6
     image: centos:6
     environment:
