@@ -22,7 +22,7 @@ steps:
     commands:
       - pwd
       - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-      - yum update -y && yum install -y git autoconf automake gcc zlib-devel make rpm-build libuuid-devel
+      - yum update -y && yum install -y git autoconf automake gcc zlib-devel make rpm-build libuuid-devel sshpass
       - yum install -y epel-release && yum update -y &&  yum install -y gcc-c++ autoconf-archive autogen libuv-devel openssl-devel Judy-devel lz4-devel nc json-c-devel libmnl-devel freeipmi-devel cups-devel snappy-devel protobuf-devel protobuf-c-devel
       - mkdir rhel7 && cd rhel7
       - git clone https://github.com/netdata/netdata.git
@@ -34,6 +34,25 @@ steps:
       - cd ../../../../ && pwd && cp /root/rpmbuild/RPMS/x86_64/netdata-v1.17.0-1.el7.x86_64.rpm .
       - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./netdata-v1.17.0-1.el7.x86_64.rpm $VPSUSER@209.141.35.192:/root/static
 
+  - name: generate_netdata_rpms_amd64_centos7
+    image: centos:7.4.1708
+    environment:
+      VPSPASS:
+        from_secret: vpspass
+      VPSPORT:
+        from_secret: vpsport
+      VPSUSER:
+        from_secret: vpsuser
+    commands:
+      - pwd
+      - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
+      - yum update -y && yum install -y epel-release && yum update -y
+      - yum install -y wget sshpass createrepo xz
+      - mkdir rhel7_rpms && cd rhel7_rpms
+      - wget --quiet http://209.141.35.192/netdata-v1.17.0-1.el7.x86_64.rpm && yum install -y netdata-v1.17.0-1.el7.x86_64.rpm
+      - find /var/cache/yum | grep rpm$ | xargs -I % cp % . && createrepo .
+      - cd .. &&  tar cJf rhel7_rpms.tar.xz rhel7_rpms
+      - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./rhel7_rpms.tar.xz $VPSUSER@209.141.35.192:/root/static
 #  - name: generate_deb_amd64_xenial
 #    #image: ubuntu:18.04
 #    image: ubuntu:16.04
