@@ -29,6 +29,7 @@ steps:
       - git clone https://github.com/netdata/netdata.git
       - cd netdata
       - git checkout tags/v1.17.0 -b local_1.17.0
+      - sed -i '/cups/d' ./netdata.spec.in
       - echo '%define __debug_install_post  %{_rpmconfigdir}/find-debuginfo.sh %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"  %{nil}'>>./netdata.spec.in
       - cd contrib/rhel
       - ./build-netdata-rpm.sh
@@ -74,6 +75,7 @@ steps:
       - git clone https://github.com/netdata/netdata.git
       - cd netdata
       - git checkout tags/v1.17.0 -b local_1.17.0
+      - sed -i '/cups/d' ./netdata.spec.in
       - echo '%define __debug_install_post  %{_rpmconfigdir}/find-debuginfo.sh %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"  %{nil}'>>./netdata.spec.in
       - cd contrib/rhel
       - ./build-netdata-rpm.sh
