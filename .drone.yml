@@ -56,36 +56,36 @@ steps:
 #*      - cd .. &&  tar cJf rhel7_rpms.tar.xz rhel7_rpms
 #*      - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./rhel7_rpms.tar.xz $VPSUSER@209.141.35.192:/root/static
 
-  - name: build_netdata_amd64_centos6
-    image: centos:6
-    #image: gpmidi/centos-6.4:latest
-    environment:
-      VPSPASS:
-        from_secret: vpspass
-      VPSPORT:
-        from_secret: vpsport
-      VPSUSER:
-        from_secret: vpsuser
-    commands:
-      - pwd
-      - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-      - yum makecache; yum install -y yum-plugin-ovl; yum clean all
-      - yum update -y ; yum clean all
-      - yum install -y git autoconf automake gcc zlib-devel make rpm-build libuuid-devel ; yum clean all
-      - yum install -y epel-release; yum clean all && yum install -y gcc-c++ autoconf-archive autogen libuv-devel openssl-devel Judy-devel lz4-devel nc json-c-devel libmnl-devel freeipmi-devel snappy-devel protobuf-devel protobuf-c-devel sshpass; yum clean all
-      - mkdir rhel6 && cd rhel6
-      - /usr/bin/git clone https://github.com/netdata/netdata.git
-      - cd netdata
-      - /usr/bin/git checkout tags/v1.17.0 -b local_1.17.0
-      - /bin/sed -i '/cups/d' ./netdata.spec.in
-      - echo '%define __debug_install_post  %{_rpmconfigdir}/find-debuginfo.sh %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"  %{nil}'>>./netdata.spec.in
-      - cd contrib/rhel
-      - ./build-netdata-rpm.sh
-      - cd ../../../../ && pwd && cp /root/rpmbuild/RPMS/x86_64/netdata-v1.17.0-1.el6.x86_64.rpm .
-      - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./netdata-v1.17.0-1.el6.x86_64.rpm $VPSUSER@209.141.35.192:/root/static
+#*  - name: build_netdata_amd64_centos6
+#*    image: centos:6
+#*    #image: gpmidi/centos-6.4:latest
+#*    environment:
+#*      VPSPASS:
+#*        from_secret: vpspass
+#*      VPSPORT:
+#*        from_secret: vpsport
+#*      VPSUSER:
+#*        from_secret: vpsuser
+#*    commands:
+#*      - pwd
+#*      - sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
+#*      - yum makecache; yum install -y yum-plugin-ovl; yum clean all
+#*      - yum update -y ; yum clean all
+#*      - yum install -y git autoconf automake gcc zlib-devel make rpm-build libuuid-devel ; yum clean all
+#*      - yum install -y epel-release; yum clean all && yum install -y gcc-c++ autoconf-archive autogen libuv-devel openssl-devel Judy-devel lz4-devel nc json-c-devel libmnl-devel freeipmi-devel snappy-devel protobuf-devel protobuf-c-devel sshpass; yum clean all
+#*      - mkdir rhel6 && cd rhel6
+#*      - /usr/bin/git clone https://github.com/netdata/netdata.git
+#*      - cd netdata
+#*      - /usr/bin/git checkout tags/v1.17.0 -b local_1.17.0
+#*      - /bin/sed -i '/cups/d' ./netdata.spec.in
+#*      - echo '%define __debug_install_post  %{_rpmconfigdir}/find-debuginfo.sh %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"  %{nil}'>>./netdata.spec.in
+#*      - cd contrib/rhel
+#*      - ./build-netdata-rpm.sh
+#*      - cd ../../../../ && pwd && cp /root/rpmbuild/RPMS/x86_64/netdata-v1.17.0-1.el6.x86_64.rpm .
+#*      - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./netdata-v1.17.0-1.el6.x86_64.rpm $VPSUSER@209.141.35.192:/root/static
 
   - name: generate_netdata_rpms_amd64_centos6
-    image: centos:6
+    image: centos:6.6
     #image: gpmidi/centos-6.4:latest
     environment:
       VPSPASS:
@@ -98,7 +98,8 @@ steps:
       - pwd
       - /bin/sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
       - yum update -y && yum install -y epel-release && yum update -y
-      - yum install -y wget sshpass createrepo xz openssh-clients
+      - yum install -y wget sshpass createrepo xz openssh-clients free-ipmi
+      - yum install -y openssl-1.0.1e-58.el6_10
       - mkdir rhel6_rpms && cd rhel6_rpms
       - wget --quiet http://209.141.35.192/netdata-v1.17.0-1.el6.x86_64.rpm && yum install -y netdata-v1.17.0-1.el6.x86_64.rpm
       - find /var/cache/yum | grep rpm$ | xargs -I % cp % . && createrepo .
