@@ -98,9 +98,11 @@ steps:
       - pwd
       - /bin/sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
       - yum update -y && yum install -y epel-release && yum update -y
-      - yum install -y wget sshpass createrepo xz openssh-clients free-ipmi
+      - yum install -y wget sshpass createrepo xz openssh-clients free-ipmi tar
+      - yum install -y openssl-1.0.1e-58.el6_10
       - mkdir rhel6_rpms && cd rhel6_rpms
       - wget --quiet http://209.141.35.192/netdata-v1.17.0-1.el6.x86_64.rpm && yum install -y netdata-v1.17.0-1.el6.x86_64.rpm
       - find /var/cache/yum | grep rpm$ | xargs -I % cp % . && createrepo .
+      - cd .. &&  sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./rhel6_rpms $VPSUSER@209.141.35.192:/root/static && cd rhel6_rpms
       - cd .. &&  tar cJf rhel6_rpms.tar.xz rhel6_rpms
       - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./rhel6_rpms.tar.xz $VPSUSER@209.141.35.192:/root/static
