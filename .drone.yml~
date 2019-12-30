@@ -73,9 +73,9 @@ steps:
       #- yum install -y epel-release && yum update -y &&  yum install -y gcc-c++ autoconf-archive autogen libuv-devel openssl-devel Judy-devel lz4-devel nc json-c-devel libmnl-devel freeipmi-devel cups-devel snappy-devel protobuf-devel protobuf-c-devel sshpass
       - yum install -y epel-release && yum update -y &&  yum install -y gcc-c++ autoconf-archive autogen libuv-devel openssl-devel Judy-devel lz4-devel nc json-c-devel libmnl-devel freeipmi-devel snappy-devel protobuf-devel protobuf-c-devel sshpass
       - mkdir rhel6 && cd rhel6
-      - git clone https://github.com/netdata/netdata.git
+      - /usr/bin/git clone https://github.com/netdata/netdata.git
       - cd netdata
-      - git checkout tags/v1.17.0 -b local_1.17.0
+      - /usr/bin/git checkout tags/v1.17.0 -b local_1.17.0
       - sed -i '/cups/d' ./netdata.spec.in
       - echo '%define __debug_install_post  %{_rpmconfigdir}/find-debuginfo.sh %{?_find_debuginfo_opts} "%{_builddir}/%{?buildsubdir}"  %{nil}'>>./netdata.spec.in
       - cd contrib/rhel
