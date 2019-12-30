@@ -57,8 +57,8 @@ steps:
 #*      - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./rhel7_rpms.tar.xz $VPSUSER@209.141.35.192:/root/static
 
   - name: build_netdata_amd64_centos6
-    #image: centos:6
-    image: gpmidi/centos-6.4:latest
+    image: centos:6
+    #image: gpmidi/centos-6.4:latest
     environment:
       VPSPASS:
         from_secret: vpspass
@@ -85,8 +85,8 @@ steps:
       - sshpass -p $VPSPASS scp -P$VPSPORT -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ./netdata-v1.17.0-1.el6.x86_64.rpm $VPSUSER@209.141.35.192:/root/static
 
   - name: generate_netdata_rpms_amd64_centos6
-    #image: centos:6
-    image: gpmidi/centos-6.4:latest
+    image: centos:6
+    #image: gpmidi/centos-6.4:latest
     environment:
       VPSPASS:
         from_secret: vpspass
@@ -97,9 +97,8 @@ steps:
     commands:
       - pwd
       - /bin/sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-      - yum makecache; yum install -y yum-plugin-ovl; yum clean all
-      - yum update -y; yum clean all && yum install -y epel-release; yum clean all && yum update -y; yum clean all
-      - yum install -y wget sshpass createrepo xz openssh-clients; yum clean all
+      - yum update -y && yum install -y epel-release && yum update -y
+      - yum install -y wget sshpass createrepo xz openssh-clients
       - mkdir rhel6_rpms && cd rhel6_rpms
       - wget --quiet http://209.141.35.192/netdata-v1.17.0-1.el6.x86_64.rpm && yum install -y netdata-v1.17.0-1.el6.x86_64.rpm
       - find /var/cache/yum | grep rpm$ | xargs -I % cp % . && createrepo .
