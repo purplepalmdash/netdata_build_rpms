@@ -97,7 +97,7 @@ steps:
     commands:
       - pwd
       - /bin/sed -i 's/keepcache=0/keepcache=1/' /etc/yum.conf
-      - yum update -y; yum install -y yum-plugin-ovl
+      - yum makecache; yum install -y yum-plugin-ovl
       - yum update -y && yum install -y epel-release && yum update -y
       - yum install -y wget sshpass createrepo xz openssh-clients
       - mkdir rhel6_rpms && cd rhel6_rpms
